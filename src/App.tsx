@@ -102,21 +102,19 @@ function Board({
 }
 
 export default function App() {
-  const [xIsNext, setXIsNext] = useState<boolean>(true);
   const [history, setHistory] = useState<string[][]>(Array(9).fill(""));
   const [currentStep, setCurrentStep] = useState<number>(0);
+  const xIsNext = currentStep % 2 === 0;
   const currentSquares: string[] = history[currentStep];
 
   const handlePlay = (nextSquares: string[]) => {
     const nextHistory = [...history.slice(0, currentStep + 1), nextSquares];
     setHistory(nextHistory);
     setCurrentStep(nextHistory.length - 1);
-    setXIsNext(!xIsNext);
   };
 
   const jumpTo = (step: number) => {
     setCurrentStep(step);
-    setXIsNext(step % 2 === 0);
   };
 
   const moves = history.map((step, move) => {
