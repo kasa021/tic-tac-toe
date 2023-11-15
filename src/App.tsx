@@ -81,21 +81,16 @@ function Board({
           alignItems: "center",
         }}
       >
-        <ButtonGroup variant="outlined" aria-label="outlined button group">
-          <Square value={squares[0]} onClickSquare={() => handleClick(0)} />
-          <Square value={squares[1]} onClickSquare={() => handleClick(1)} />
-          <Square value={squares[2]} onClickSquare={() => handleClick(2)} />
-        </ButtonGroup>
-        <ButtonGroup variant="outlined" aria-label="text button group">
-          <Square value={squares[3]} onClickSquare={() => handleClick(3)} />
-          <Square value={squares[4]} onClickSquare={() => handleClick(4)} />
-          <Square value={squares[5]} onClickSquare={() => handleClick(5)} />
-        </ButtonGroup>
-        <ButtonGroup variant="outlined" aria-label="text button group">
-          <Square value={squares[6]} onClickSquare={() => handleClick(6)} />
-          <Square value={squares[7]} onClickSquare={() => handleClick(7)} />
-          <Square value={squares[8]} onClickSquare={() => handleClick(8)} />
-        </ButtonGroup>
+        {[0, 1, 2].map((i) => (
+          <ButtonGroup variant="outlined" aria-label="outlined button group">
+            {[0, 1, 2].map((j) => (
+              <Square
+                value={squares[i * 3 + j]}
+                onClickSquare={() => handleClick(i * 3 + j)}
+              />
+            ))}
+          </ButtonGroup>
+        ))}
       </Box>
     </>
   );
