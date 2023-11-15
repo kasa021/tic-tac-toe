@@ -55,9 +55,6 @@ function Board({
 }) {
   const handleClick = (i: number) => {
     if (squares[i] || calculateWinner(squares)) {
-      console.log("already clicked");
-      console.log(squares[i]);
-      console.log(calculateWinner(squares));
       return;
     }
     const squaresCopy = [...squares];
@@ -107,18 +104,24 @@ function Board({
 export default function App() {
   const [xIsNext, setXIsNext] = useState<boolean>(true);
   const [history, setHistory] = useState<string[][]>(Array(9).fill(""));
-  const currentSquares = history[history.length - 1];
+  const [currentStep, setCurrentStep] = useState<number>(0);
+  const currentSquares: string[] = history[currentStep];
 
   const handlePlay = (nextSquares: string[]) => {
-    setHistory([...history, nextSquares]);
+    const nextHistory = [...history.slice(0, currentStep + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentStep(nextHistory.length - 1);
     setXIsNext(!xIsNext);
   };
 
-  const jumpTo = (step: number) => {};
+  const jumpTo = (step: number) => {
+    setCurrentStep(step);
+    setXIsNext(step % 2 === 0);
+  };
 
   const moves = history.map((step, move) => {
     if (!step.length && move !== 0) return;
-    const desc = move > 0 ? `Go to move #${move - 8}` : "Go to game start";
+    const desc = move > 0 ? `Go to move #${move}` : "Go to game start";
     return (
       <li key={move}>
         <Button onClick={() => jumpTo(move)}>{desc}</Button>
