@@ -4,12 +4,18 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Box from "@mui/material/Box";
 
-function Square({ value }: { value: string }) {
+function Square() {
+  const [value, setValue] = useState<string>("");
+  const handleClick = () => {
+    value === "" ? setValue("X") : setValue("");
+  }
   return (
     <Button
       sx={{
         width: "60px",
+        height: "60px",
       }}
+      onClick={handleClick}
     >
       {value}
     </Button>
@@ -29,19 +35,19 @@ function App() {
         }}
       >
         <ButtonGroup variant="outlined" aria-label="outlined button group">
-          <Square value="1" />
-          <Square value="2" />
-          <Square value="3" />
+          <Square />
+          <Square />
+          <Square />
         </ButtonGroup>
         <ButtonGroup variant="outlined" aria-label="text button group">
-          <Square value="4" />
-          <Square value="5" />
-          <Square value="6" />
+          <Square />
+          <Square />
+          <Square />
         </ButtonGroup>
         <ButtonGroup variant="outlined" aria-label="text button group">
-          <Square value="7" />
-          <Square value="8" />
-          <Square value="9" />
+          <Square />
+          <Square />
+          <Square />
         </ButtonGroup>
       </Box>
     </>
