@@ -1,12 +1,23 @@
-import { useState } from 'react'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Box from "@mui/material/Box";
 
+function Square({ value }: { value: string }) {
+  return (
+    <Button
+      sx={{
+        width: "60px",
+      }}
+    >
+      {value}
+    </Button>
+  );
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>
@@ -18,23 +29,23 @@ function App() {
         }}
       >
         <ButtonGroup variant="outlined" aria-label="outlined button group">
-          <Button>1</Button>
-          <Button>2</Button>
-          <Button>3</Button>
+          <Square value="1" />
+          <Square value="2" />
+          <Square value="3" />
         </ButtonGroup>
         <ButtonGroup variant="outlined" aria-label="text button group">
-          <Button>4</Button>
-          <Button>5</Button>
-          <Button>6</Button>
+          <Square value="4" />
+          <Square value="5" />
+          <Square value="6" />
         </ButtonGroup>
         <ButtonGroup variant="outlined" aria-label="text button group">
-          <Button>7</Button>
-          <Button>8</Button>
-          <Button>9</Button>
+          <Square value="7" />
+          <Square value="8" />
+          <Square value="9" />
         </ButtonGroup>
       </Box>
     </>
   );
 }
 
-export default App
+export default App;
