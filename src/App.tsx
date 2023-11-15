@@ -51,10 +51,12 @@ function Board({
   xIsNext,
   squares,
   onPlay,
+  currentStep,
 }: {
   xIsNext: boolean;
   squares: string[];
   onPlay: (nextSquares: string[]) => void;
+  currentStep: number;
 }) {
   const handleClick = (i: number) => {
     if (squares[i] || calculateWinner(squares)) {
@@ -70,8 +72,10 @@ function Board({
   let status: string;
   if (winner) {
     status = "Winner: " + squares[winner[0]];
-  } else {
+  } else if (currentStep !== 9) {
     status = "Next player: " + (xIsNext ? "X" : "O");
+  } else {
+    status = "Draw";
   }
 
   return (
@@ -85,13 +89,17 @@ function Board({
         }}
       >
         {[0, 1, 2].map((i) => (
-          <ButtonGroup variant="outlined" aria-label="outlined button group" key = {i}>
+          <ButtonGroup
+            variant="outlined"
+            aria-label="outlined button group"
+            key={i}
+          >
             {[0, 1, 2].map((j) => (
               <Square
                 value={squares[i * 3 + j]}
                 onClickSquare={() => handleClick(i * 3 + j)}
                 win={!!winner && winner.includes(i * 3 + j)}
-                key = {j}
+                key={j}
               />
             ))}
           </ButtonGroup>
@@ -130,7 +138,12 @@ export default function App() {
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        <Board
+          xIsNext={xIsNext}
+          squares={currentSquares}
+          onPlay={handlePlay}
+          currentStep={currentStep}
+        />
       </div>
       <div className="game-info">
         <ol>{moves}</ol>
