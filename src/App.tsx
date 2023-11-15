@@ -26,12 +26,15 @@ function Square({
 }
 
 function App() {
+  const [xIsNext, setXIsNext] = useState<boolean>(true);
   const [squares, setSquares] = useState<string[]>(Array(9).fill(""));
 
   const handleClick = (i: number) => {
+    if(squares[i] !== "") return;
     const squaresCopy = [...squares]; 
-    squaresCopy[i] = "X";
+    xIsNext ? squaresCopy[i] = "X" : squaresCopy[i] = "O";
     setSquares(squaresCopy);
+    setXIsNext(!xIsNext);
   }
 
   return (
