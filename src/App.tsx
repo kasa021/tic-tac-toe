@@ -44,16 +44,26 @@ function calculateWinner(squares: string[]) {
   return null;
 }
 
-function App() {
-  const [xIsNext, setXIsNext] = useState<boolean>(true);
-  const [squares, setSquares] = useState<string[]>(Array(9).fill(""));
-
+function Board({
+  xIsNext,
+  squares,
+  onPlay,
+}: {
+  xIsNext: boolean;
+  squares: string[];
+  onPlay: (nextSquares: string[]) => void;
+}) {
   const handleClick = (i: number) => {
-    if (squares[i] !== "" || calculateWinner(squares)) return;
+    if (squares[i] || calculateWinner(squares)) {
+      console.log("already clicked");
+      console.log(squares[i]);
+      console.log(calculateWinner(squares));
+      return;
+    }
     const squaresCopy = [...squares];
     xIsNext ? (squaresCopy[i] = "X") : (squaresCopy[i] = "O");
-    setSquares(squaresCopy);
-    setXIsNext(!xIsNext);
+    onPlay(squaresCopy);
+    console.log(xIsNext);
   };
 
   const winner = calculateWinner(squares);
@@ -94,4 +104,36 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  const [xIsNext, setXIsNext] = useState<boolean>(true);
+  const [history, setHistory] = useState<string[][]>(Array(9).fill(""));
+  const currentSquares = history[history.length - 1];
+
+  const handlePlay = (nextSquares: string[]) => {
+    setHistory([...history, nextSquares]);
+    setXIsNext(!xIsNext);
+  };
+
+  const jumpTo = (step: number) => {};
+
+  const moves = history.map((step, move) => {
+    if (!step.length && move !== 0) return;
+    const desc = move > 0 ? `Go to move #${move - 8}` : "Go to game start";
+    return (
+      <li key={move}>
+        <Button onClick={() => jumpTo(move)}>{desc}</Button>
+      </li>
+    );
+  });
+
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div className="game-info">
+        <ol>{moves}</ol>
+      </div>
+    </div>
+  );
+}
