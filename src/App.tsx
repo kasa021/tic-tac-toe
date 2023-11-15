@@ -7,15 +7,18 @@ import Box from "@mui/material/Box";
 function Square({
   value,
   onClickSquare,
+  win,
 }: {
   value: string;
   onClickSquare: () => void;
+  win: boolean;
 }) {
   return (
     <Button
       sx={{
         width: "60px",
         height: "60px",
+        backgroundColor: win ? "yellow" : "black",
       }}
       onClick={onClickSquare}
     >
@@ -38,7 +41,7 @@ function calculateWinner(squares: string[]) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return lines[i];
     }
   }
   return null;
@@ -66,7 +69,7 @@ function Board({
   const winner = calculateWinner(squares);
   let status: string;
   if (winner) {
-    status = "Winner: " + winner;
+    status = "Winner: " + squares[winner[0]];
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
@@ -82,11 +85,13 @@ function Board({
         }}
       >
         {[0, 1, 2].map((i) => (
-          <ButtonGroup variant="outlined" aria-label="outlined button group">
+          <ButtonGroup variant="outlined" aria-label="outlined button group" key = {i}>
             {[0, 1, 2].map((j) => (
               <Square
                 value={squares[i * 3 + j]}
                 onClickSquare={() => handleClick(i * 3 + j)}
+                win={!!winner && winner.includes(i * 3 + j)}
+                key = {j}
               />
             ))}
           </ButtonGroup>
