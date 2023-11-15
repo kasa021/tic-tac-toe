@@ -135,8 +135,8 @@ export default function App() {
   });
 
   return (
-    <div className="game">
-      <div className="game-board">
+    <div>
+      <div>
         <Board
           xIsNext={xIsNext}
           squares={currentSquares}
@@ -144,7 +144,7 @@ export default function App() {
           currentStep={currentStep}
         />
       </div>
-      <div className="game-info">
+      <div>
         <ol>{moves}</ol>
       </div>
     </div>
