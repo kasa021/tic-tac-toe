@@ -5,28 +5,26 @@ import (
 	"log"
 	"os"
 
-	// "net/http"
-
+	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
 type Handler struct {
-	DB *sqlx.DB
+	DB     *sqlx.DB
 	Logger echo.Logger
 }
 
 type PostGames struct {
-	GameId int `db:"game_id" json:"game_id"`
-	GameName string `db:"game_name" json:"game_name"`
+	GameId    int    `db:"game_id" json:"game_id"`
+	GameName  string `db:"game_name" json:"game_name"`
 	CreatedAt string `db:"created_at" json:"created_at"`
 }
 
 type PostMoves struct {
-	GameId int `db:"game_id" json:"game_id"`
-	MoveNumber int `db:"move_number" json:"move_number"`
+	GameId     int    `db:"game_id" json:"game_id"`
+	MoveNumber int    `db:"move_number" json:"move_number"`
 	BoardState string `db:"board_state" json:"board_state"`
 }
 
@@ -51,7 +49,7 @@ func connectDB() *sqlx.DB {
 }
 
 func (h *Handler) postGames(c echo.Context) error {
-	g := new(PostGames) 
+	g := new(PostGames)
 	if err := c.Bind(g); err != nil {
 		return err
 	}
@@ -62,7 +60,7 @@ func (h *Handler) postGames(c echo.Context) error {
 }
 
 func (h *Handler) postMoves(c echo.Context) error {
-	m := new(PostMoves) 
+	m := new(PostMoves)
 	if err := c.Bind(m); err != nil {
 		return err
 	}
@@ -72,7 +70,6 @@ func (h *Handler) postMoves(c echo.Context) error {
 	return c.JSON(200, m)
 }
 
-// getGames
 func (h *Handler) getGames(c echo.Context) error {
 	var games []PostGames
 	if err := h.DB.Select(&games, "SELECT * FROM games"); err != nil {
@@ -81,7 +78,6 @@ func (h *Handler) getGames(c echo.Context) error {
 	return c.JSON(200, games)
 }
 
-// getMoves game_idが一致するmovesを取得
 func (h *Handler) getMoves(c echo.Context) error {
 	var moves []PostMoves
 	if err := h.DB.Select(&moves, "SELECT * FROM moves WHERE game_id = $1", c.Param("game_id")); err != nil {
