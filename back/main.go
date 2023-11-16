@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -9,26 +8,29 @@ import (
 	// "net/http"
 
 	"github.com/joho/godotenv"
+	"github.com/labstack/echo/v4"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
 type Handler struct {
-	DB *sql.DB
+	DB *sqlx.DB
+	Logger echo.Logger
 }
 
 type PostGames struct {
-	GameId   int    `db:"game_id" json:"game_id"`
+	GameId int `db:"game_id" json:"game_id"`
 	GameName string `db:"game_name" json:"game_name"`
+	CreatedAt string `db:"created_at" json:"created_at"`
 }
 
 type PostMoves struct {
-	MoveId     int    `db:"move_id" json:"move_id"`
-	GameId     int    `db:"game_id" json:"game_id"`
-	MoveNumber int    `db:"move_number" json:"move_number"`
+	GameId int `db:"game_id" json:"game_id"`
+	MoveNumber int `db:"move_number" json:"move_number"`
 	BoardState string `db:"board_state" json:"board_state"`
 }
 
-func main() {
+func connectDB() *sqlx.DB {
 	err := godotenv.Load("../.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -41,22 +43,45 @@ func main() {
 	dbPort := "5432"
 
 	var connectionString string = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbPassword, dbName)
-	db, err := sql.Open("postgres", connectionString)
+	db, err := sqlx.Connect("postgres", connectionString)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
+	return db
+}
 
-	// 要素を取ってっくる
-	rows, err := db.Query("SELECT * FROM games")
-	if err != nil {
-		log.Fatal(err)
+func (h *Handler) postGames(c echo.Context) error {
+	g := new(PostGames) 
+	if err := c.Bind(g); err != nil {
+		return err
 	}
-	fmt.Println(rows)
-	moves, err := db.Query("SELECT * FROM moves")
-	if err != nil {
-		log.Fatal(err)
+	if err := h.DB.QueryRowx("INSERT INTO games (game_name) VALUES ($1) RETURNING game_id, game_name, created_at", g.GameName).StructScan(g); err != nil {
+		return err
 	}
-	fmt.Printf("%#+v\n", moves)
+	return c.JSON(200, g)
+}
 
+func (h *Handler) postMoves(c echo.Context) error {
+	m := new(PostMoves) 
+	if err := c.Bind(m); err != nil {
+		return err
+	}
+	if err := h.DB.QueryRowx("INSERT INTO moves (game_id, move_number, board_state) VALUES ($1, $2, $3) RETURNING game_id, move_number, board_state", m.GameId, m.MoveNumber, m.BoardState).StructScan(m); err != nil {
+		return err
+	}
+	return c.JSON(200, m)
+
+}
+
+func main() {
+	e := echo.New()
+	e.Debug = true
+	db := connectDB()
 	defer db.Close()
+	h := &Handler{DB: db, Logger: e.Logger}
+	api := e.Group("/api")
+	api.POST("/posts/games", h.postGames)
+	api.POST("/posts/moves", h.postMoves)
+
+	e.Logger.Fatal(e.Start(":8080"))
 }
