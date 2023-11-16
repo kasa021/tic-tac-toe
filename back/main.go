@@ -70,7 +70,24 @@ func (h *Handler) postMoves(c echo.Context) error {
 		return err
 	}
 	return c.JSON(200, m)
+}
 
+// getGames
+func (h *Handler) getGames(c echo.Context) error {
+	var games []PostGames
+	if err := h.DB.Select(&games, "SELECT * FROM games"); err != nil {
+		return err
+	}
+	return c.JSON(200, games)
+}
+
+// getMoves game_idが一致するmovesを取得
+func (h *Handler) getMoves(c echo.Context) error {
+	var moves []PostMoves
+	if err := h.DB.Select(&moves, "SELECT * FROM moves WHERE game_id = $1", c.Param("game_id")); err != nil {
+		return err
+	}
+	return c.JSON(200, moves)
 }
 
 func main() {
@@ -82,6 +99,8 @@ func main() {
 	api := e.Group("/api")
 	api.POST("/posts/games", h.postGames)
 	api.POST("/posts/moves", h.postMoves)
+	api.GET("/get/games", h.getGames)
+	api.GET("/get/moves/:game_id", h.getMoves)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
