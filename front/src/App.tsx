@@ -39,7 +39,7 @@ function calculateWinner(squares: string[]) {
   ];
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c] && squares[a] !== " ") {
       return lines[i];
     }
   }
@@ -58,7 +58,7 @@ function Board({
   currentStep: number;
 }) {
   const handleClick = (i: number) => {
-    if (squares[i] || calculateWinner(squares)) {
+    if (squares[i] === "X" || squares[i] === "O"|| calculateWinner(squares)) {
       return;
     }
     const squaresCopy = [...squares];
@@ -109,7 +109,7 @@ function Board({
 }
 
 export default function App() {
-  const [history, setHistory] = useState<string[][]>(Array(9).fill(""));
+  const [history, setHistory] = useState<string[][]>([Array(9).fill(" ")]);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const xIsNext = currentStep % 2 === 0;
   const currentSquares: string[] = history[currentStep];
@@ -125,7 +125,9 @@ export default function App() {
   };
 
   const moves = history.map((step, move) => {
-    if (!step.length && move !== 0) return;
+    if (move !== 0 && step.every((s) => s === " ")) {
+      return;
+    }
     const desc = move > 0 ? `Go to move #${move}` : "Go to game start";
     return (
       <li key={move}>
