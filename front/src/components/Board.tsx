@@ -7,11 +7,13 @@ export const Board = ({
   squares,
   onPlay,
   currentStep,
+  history,
 }: {
   xIsNext: boolean;
-  squares: string[];
+  squares: string;
   onPlay: (nextSquares: string[]) => void;
   currentStep: number;
+  history: string[];
 }) => {
   const handleClick = (i: number) => {
     if (squares[i] === "X" || squares[i] === "O" || calculateWinner(squares)) {
@@ -23,14 +25,59 @@ export const Board = ({
     console.log(xIsNext);
   };
 
+  // 勝敗が決まるか、引き分けになった時にDBに保存する
+  // ゲームの名前を保存して、gameIdを取得する
+  const postGame = async () => {
+    const res = await fetch("http://localhost:8080/api/posts/games", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ gameName: "TicTacToe" }),
+    });
+    const data = await res.json();
+    console.log(data);
+    return data;
+  };
+
+  // gameIdを使って、movesを保存する
+  const postMoves = async (gameId: number) => {
+    history.forEach(async (step, move) => {
+      if(move === 0) {
+        console.log("testやで", gameId, move, step);
+      }
+      const res = await fetch("http://localhost:8080/api/posts/moves", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gameId: gameId,
+          moveNumber: move,
+          boardState: step,
+        }),
+      });
+      const data = await res.json();
+      console.log(data);
+      return data;
+    });
+  };
+
   const winner = calculateWinner(squares);
   let status: string;
   if (winner) {
     status = "Winner: " + squares[winner[0]];
+    postGame().then((res) => {
+      postMoves(res.gameId);
+    });
+    console.log(history);
   } else if (currentStep !== 9) {
     status = "Next player: " + (xIsNext ? "X" : "O");
   } else {
     status = "Draw";
+    postGame().then((res) => {
+      postMoves(res.gameId);
+    });
   }
 
   return (
@@ -64,7 +111,7 @@ export const Board = ({
   );
 };
 
-function calculateWinner(squares: string[]) {
+function calculateWinner(squares: string) {
   const lines: number[][] = [
     [0, 1, 2],
     [3, 4, 5],

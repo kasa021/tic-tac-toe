@@ -2,14 +2,18 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import { Board } from "../components/Board";
 
-export const  Home = () => {
-  const [history, setHistory] = useState<string[][]>([Array(9).fill(" ")]);
+export const Home = () => {
+  const [history, setHistory] = useState<string[]>(["         "]);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const xIsNext = currentStep % 2 === 0;
-  const currentSquares: string[] = history[currentStep];
+  const currentSquares: string = history[currentStep];
 
   const handlePlay = (nextSquares: string[]) => {
-    const nextHistory = [...history.slice(0, currentStep + 1), nextSquares];
+    const nextHistory = [
+      ...history.slice(0, currentStep + 1),
+      nextSquares.join(""),
+    ];
+
     setHistory(nextHistory);
     setCurrentStep(nextHistory.length - 1);
   };
@@ -19,7 +23,7 @@ export const  Home = () => {
   };
 
   const moves = history.map((step, move) => {
-    if (move !== 0 && step.every((s) => s === " ")) {
+    if (move !== 0 && step === "         ") {
       return;
     }
     const desc = move > 0 ? `Go to move #${move}` : "Go to game start";
@@ -38,6 +42,7 @@ export const  Home = () => {
           squares={currentSquares}
           onPlay={handlePlay}
           currentStep={currentStep}
+          history={history}
         />
       </div>
       <div>
@@ -45,4 +50,4 @@ export const  Home = () => {
       </div>
     </div>
   );
-}
+};
