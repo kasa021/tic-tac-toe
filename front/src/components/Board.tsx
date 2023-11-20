@@ -22,7 +22,6 @@ export const Board = ({
     const squaresCopy = [...squares];
     xIsNext ? (squaresCopy[i] = "X") : (squaresCopy[i] = "O");
     onPlay(squaresCopy);
-    console.log(xIsNext);
   };
 
   // 勝敗が決まるか、引き分けになった時にDBに保存する
@@ -36,16 +35,12 @@ export const Board = ({
       body: JSON.stringify({ gameName: "TicTacToe" }),
     });
     const data = await res.json();
-    console.log(data);
     return data;
   };
 
   // gameIdを使って、movesを保存する
-  const postMoves = async (gameId: number) => {
+  const postMoves = async (gameId: number, winner: string) => {
     history.forEach(async (step, move) => {
-      if (move === 0) {
-        console.log("testやで", gameId, move, step);
-      }
       const res = await fetch("http://localhost:8080/api/posts/moves", {
         method: "POST",
         headers: {
@@ -55,10 +50,10 @@ export const Board = ({
           gameId: gameId,
           moveNumber: move,
           boardState: step,
+          winner: winner,
         }),
       });
       const data = await res.json();
-      console.log(data);
       return data;
     });
   };
@@ -68,15 +63,14 @@ export const Board = ({
   if (winner) {
     status = "Winner: " + squares[winner[0]];
     postGame().then((res) => {
-      postMoves(res.gameId);
+      postMoves(res.gameId, squares[winner[0]]);
     });
-    console.log(history);
   } else if (currentStep !== 9) {
     status = "Next player: " + (xIsNext ? "X" : "O");
   } else {
     status = "Draw";
     postGame().then((res) => {
-      postMoves(res.gameId);
+      postMoves(res.gameId, "Draw");
     });
   }
 
