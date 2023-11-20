@@ -89,6 +89,18 @@ func (h *Handler) getMoves(c echo.Context) error {
 func main() {
 	e := echo.New()
 	e.Debug = true
+	e.HideBanner = true
+	arrowOrigin := "http://localhost:5173"
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Response().Header().Set("Access-Control-Allow-Origin", arrowOrigin)
+			c.Response().Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			c.Response().Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+			c.Response().Header().Set("Access-Control-Allow-Credentials", "true")
+			return next(c)
+		}
+	})
+
 	db := connectDB()
 	defer db.Close()
 	h := &Handler{DB: db, Logger: e.Logger}
