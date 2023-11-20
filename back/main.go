@@ -17,15 +17,15 @@ type Handler struct {
 }
 
 type PostGames struct {
-	GameId    int    `db:"game_id" json:"game_id"`
-	GameName  string `db:"game_name" json:"game_name"`
-	CreatedAt string `db:"created_at" json:"created_at"`
+	GameId    int    `db:"game_id" json:"gameId"`
+	GameName  string `db:"game_name" json:"gameName"`
+	CreatedAt string `db:"created_at" json:"createdAt"`
 }
 
 type PostMoves struct {
-	GameId     int    `db:"game_id" json:"game_id"`
-	MoveNumber int    `db:"move_number" json:"move_number"`
-	BoardState string `db:"board_state" json:"board_state"`
+	GameId     int    `db:"game_id" json:"gameId"`
+	MoveNumber int    `db:"move_number" json:"moveNumber"`
+	BoardState string `db:"board_state" json:"boardState"`
 }
 
 func connectDB() *sqlx.DB {
