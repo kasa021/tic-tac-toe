@@ -33,7 +33,6 @@ export const GameMoves = () => {
       console.log(data);
       return;
     }
-    // dataをmoveNumberでソートする
     data.sort((a: GameMoves, b: GameMoves) => {
       if (a.moveNumber < b.moveNumber) {
         return -1;
@@ -67,9 +66,7 @@ export const GameMoves = () => {
           >
             {[0, 1, 2].map((j) => (
               <Square
-                value={
-                  currentBoardState ? currentBoardState[i * 3 + j] : ""
-                }
+                value={currentBoardState ? currentBoardState[i * 3 + j] : ""}
                 key={j}
               />
             ))}
@@ -78,7 +75,7 @@ export const GameMoves = () => {
         <List>
           {history.map((move) => (
             <ListItem disablePadding key={move.moveNumber}>
-              <ListItemButton onClick = { () => showBoardState(move)}>
+              <ListItemButton onClick={() => showBoardState(move)}>
                 <ListItemText primary={move.moveNumber} />
               </ListItemButton>
             </ListItem>

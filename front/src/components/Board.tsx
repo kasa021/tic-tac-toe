@@ -43,7 +43,7 @@ export const Board = ({
   // gameIdを使って、movesを保存する
   const postMoves = async (gameId: number) => {
     history.forEach(async (step, move) => {
-      if(move === 0) {
+      if (move === 0) {
         console.log("testやで", gameId, move, step);
       }
       const res = await fetch("http://localhost:8080/api/posts/moves", {
