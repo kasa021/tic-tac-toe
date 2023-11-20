@@ -33,6 +33,14 @@ export const GameMoves = () => {
       console.log(data);
       return;
     }
+    // dataをmoveNumberでソートする
+    data.sort((a: GameMoves, b: GameMoves) => {
+      if (a.moveNumber < b.moveNumber) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
     setHistory(data);
     setCurrentBoardState(data[0].boardState);
     console.log(data);
