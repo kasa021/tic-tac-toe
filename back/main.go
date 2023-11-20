@@ -20,6 +20,7 @@ type PostGames struct {
 	GameId    int    `db:"game_id" json:"gameId"`
 	GameName  string `db:"game_name" json:"gameName"`
 	CreatedAt string `db:"created_at" json:"createdAt"`
+	Winner    string `db:"winner" json:"winner"`
 }
 
 type PostMoves struct {
@@ -53,7 +54,7 @@ func (h *Handler) postGames(c echo.Context) error {
 	if err := c.Bind(g); err != nil {
 		return err
 	}
-	if err := h.DB.QueryRowx("INSERT INTO games (game_name) VALUES ($1) RETURNING game_id, game_name, created_at", g.GameName).StructScan(g); err != nil {
+	if err := h.DB.QueryRowx("INSERT INTO games (game_name, winner) VALUES ($1, $2) RETURNING game_id, game_name, winner, created_at", g.GameName, g.Winner).StructScan(g); err != nil {
 		return err
 	}
 	return c.JSON(200, g)

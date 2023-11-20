@@ -9,6 +9,7 @@ interface GameLog {
   gameId: number;
   gameName: string;
   createdAt: string;
+  winner: string;
 }
 
 export const Log = () => {
@@ -24,7 +25,6 @@ export const Log = () => {
       return;
     }
     setHistory(data);
-    console.log(data);
   };
 
   useEffect(() => {
@@ -36,7 +36,13 @@ export const Log = () => {
       <List>
         {history.map((game) => (
           <ListItem disablePadding key={game.gameId}>
-            <ListItemButton component={Link} to={`/game/${game.gameId}`}>
+            <ListItemButton
+              component={Link}
+              to={{
+                pathname: `/game/${game.gameId}`,
+                search: `?winner=${game.winner}`,
+              }}
+            >
               <ListItemText primary={game.gameName} />
             </ListItemButton>
           </ListItem>

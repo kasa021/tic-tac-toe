@@ -16,6 +16,8 @@ export const GameMoves = () => {
   const [currentBoardState, setCurrentBoardState] = useState<string>("");
   const location = useLocation();
   const gameId = location.pathname.split("/")[2];
+  const winner = location.search.split("=")[1];
+  console.log(winner);
 
   const showBoardState = (move: GameMoves) => {
     setCurrentBoardState(move.boardState);
@@ -42,7 +44,6 @@ export const GameMoves = () => {
     });
     setHistory(data);
     setCurrentBoardState(data[0].boardState);
-    console.log(data);
   };
 
   useEffect(() => {
@@ -58,6 +59,13 @@ export const GameMoves = () => {
           alignItems: "center",
         }}
       >
+        {winner === "X" ? (
+          <div>Winner: X</div>
+        ) : winner === "O" ? (
+          <div>Winner: O</div>
+        ) : (
+          <div>Draw</div>
+        )}
         {[0, 1, 2].map((i) => (
           <ButtonGroup
             variant="outlined"
