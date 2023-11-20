@@ -36,7 +36,7 @@ export const Log = () => {
       <List>
         {history.map((game) => (
           <ListItem disablePadding key={game.gameId}>
-            <ListItemButton component={Link} to={`/games/${game.gameId}`}>
+            <ListItemButton component={Link} to={`/game/${game.gameId}`}>
               <ListItemText primary={game.gameName} />
             </ListItemButton>
           </ListItem>
