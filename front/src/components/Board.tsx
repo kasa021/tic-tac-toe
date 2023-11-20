@@ -103,7 +103,7 @@ function Square({
       sx={{
         width: "60px",
         height: "60px",
-        backgroundColor: win ? "yellow" : "black",
+        backgroundColor: win ? "yellow" : "white  ",
       }}
       onClick={onClickSquare}
     >
